@@ -10,7 +10,7 @@
   font-style: normal;
   font-weight: 400;
   height: 50px;
-  line-height: 22px;
+  line-height: 1.2;
   margin: 48px 0 0 0;
   outline: 0;
   text-align: center;
@@ -19,6 +19,13 @@
 }
 
 .popup__save-button:hover {
-  cursor: pointer;
   opacity: .8;
+}
+
+@media screen and (max-width: 600px) {
+  .popup__save-button {
+    margin: 45px 0 0 0;
+    height: 46px;
+    font-size: 14px;
+  }
 }

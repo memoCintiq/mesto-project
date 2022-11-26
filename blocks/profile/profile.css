@@ -1,7 +1,7 @@
 .profile {
   display: flex;
-  padding: 40px 200px 0 200px;
-  width: calc(100% - 400px);
+  padding: 40px 0 0 0;
+  width: 100%;
 }
 
 @media screen and (max-width: 1023px) {
