@@ -1,0 +1,5 @@
+.popup__form {
+  font-style: normal;
+  margin: 54px auto 0 auto;
+  width: calc(100% - 72px);
+}
