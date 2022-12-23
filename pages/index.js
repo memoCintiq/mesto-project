@@ -3,13 +3,13 @@ const template = document.querySelector("#cards__item").content;
 const popupAll = document.querySelectorAll('.popup');
 const popupProfile = document.querySelector('#profile');
 const popupCreate = document.querySelector('#create');
-const editButton = document.querySelector('.profile__edit-button');
-const addButton = document.querySelector('.profile__add-button');
+const buttonOpenEditProfilePopup = document.querySelector('.profile__edit-button');
+const buttonOpenAddCardPopup = document.querySelector('.profile__add-button');
 const profileName = document.querySelector('.profile__name');
 const profileAbout = document.querySelector('.profile__about');
 const closeButtons = document.querySelectorAll('.popup__close-button');
 const profileForm = document.querySelector('#profile-form');
-const createForm = document.querySelector('#create-form');
+const formAddCard = document.querySelector('#create-form');
 const inputName = document.querySelector('#inputName');
 const inputAbout = document.querySelector('#inputAbout');
 const inputPlace = document.querySelector('#inputPlace');
@@ -17,34 +17,6 @@ const inputUrl = document.querySelector('#inputUrl');
 const popupImage = document.querySelector('#image');
 const popupPic = document.querySelector('.popup__picture');
 const popupDesc = document.querySelector('.popup__description');
-
-
-const initialCards = [
-  {
-    name: 'Архыз',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg'
-  },
-  {
-    name: 'Челябинская область',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg'
-  },
-  {
-    name: 'Иваново',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg'
-  },
-  {
-    name: 'Камчатка',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg'
-  },
-  {
-    name: 'Холмогорский район',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg'
-  },
-  {
-    name: 'Байкал',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
-  }
-];
 
 function openPopup(popup) {
   popup.classList.add('popup_opened');
@@ -62,7 +34,7 @@ popupAll.forEach(function (popup) {
   })
 })
 
-editButton.addEventListener('click', function () {
+buttonOpenEditProfilePopup.addEventListener('click', function () {
   openPopup(popupProfile);
   inputName.value = profileName.textContent;
   inputAbout.value = profileAbout.textContent;
@@ -74,23 +46,21 @@ profileForm.addEventListener('submit', function (e) {
   profileAbout.textContent = inputAbout.value;
 
   closePopup(popupProfile);
-
-  inputName.value = '';
-  inputAbout.value = '';
 });
 
-addButton.addEventListener('click', function () {
+buttonOpenAddCardPopup.addEventListener('click', function () {
   openPopup(popupCreate);
 });
 
 function createCard(name, link) {
   const card = template.querySelector('.cards__item').cloneNode(true);
+  let cardImage = card.querySelector('.cards__image');
 
-  card.querySelector('.cards__image').alt = name;
-  card.querySelector('.cards__image').src = link;
+  cardImage.alt = name;
+  cardImage.src = link;
   card.querySelector('.cards__title').textContent = name;
 
-  card.querySelector('.cards__image').addEventListener('click', function (e) {
+  cardImage.addEventListener('click', function (e) {
     popupPic.src = link;
     popupPic.alt = name;
     popupDesc.textContent = name;
@@ -110,17 +80,17 @@ function addCard(card, container) {
   container.prepend(card);
 }
 
-createForm.addEventListener('submit', function (e) {
+formAddCard.addEventListener('submit', function (e) {
   e.preventDefault();
   if (inputPlace.value !== '' && inputUrl.value !== '') {
     addCard(createCard(inputPlace.value, inputUrl.value), cards);
   }
   closePopup(popupCreate);
 
-  inputPlace.value = '';
-  inputUrl.value = '';
+  formAddCard.reset();
 });
 
-for (let i = 0; i < initialCards.length; i++) {
-  addCard(createCard(initialCards[i].name, initialCards[i].link), cards);
-}
+initialCards.forEach((card) => {
+  addCard(createCard(card.name, card.link), cards);
+})
+
