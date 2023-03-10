@@ -1,5 +1,6 @@
 const popupImageZoom = document.querySelector('#image'); // mb put evrthg to constants.js
 const buttonCloseList = document.querySelectorAll('.popup__close-button');
+const popups = document.querySelectorAll('.popup');
 const popupPic = document.querySelector('.popup__picture');
 const popupDisc = document.querySelector('.popup__description');
 
@@ -16,13 +17,11 @@ function createPopupImageZoom(link, title) {
 function openPopup(popup) {
   popup.classList.add('popup_opened');
   document.addEventListener('keydown', closePopupEsc);
-  popup.addEventListener('mousedown', closePopupMousedown);
 }
 
 function closePopup(popup) {
   popup.classList.remove('popup_opened');
   document.removeEventListener('keydown', closePopupEsc);
-  popup.removeEventListener('mousedown', closePopupMousedown);
 }
 
 function closePopupEsc(evt) {
@@ -36,6 +35,12 @@ function closePopupMousedown(evt) {
     closePopup(evt.target);
   }
 }
+
+// Setting listenters on popups
+
+popups.forEach(function(popup) {
+  popup.addEventListener('mousedown', closePopupMousedown);
+});
 
 // Setting listeners on close buttons
 

@@ -1,5 +1,3 @@
-import { settings } from '../components/constants.js';
-
 // Show error, change input
 
 function showInputError (form, input, errorMessage, settings) {
@@ -73,13 +71,7 @@ function setEventListeners (form, settings) {
 
 function enableValidation (settings) {
   const forms = Array.from(document.querySelectorAll(settings.formSelector));
-  forms.forEach((form) => {               // temporary
-    form.setAttribute('novalidate', true);
-  });
   forms.forEach((form) => {
-    form.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-    });
     setEventListeners(form, settings);
   });
 };

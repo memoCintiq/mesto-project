@@ -5,11 +5,14 @@ import { createPopupImageZoom } from '../components/modal.js';
 
 const cards = document.querySelector('.cards__items');
 
+// Getting a card template
+
+const templateCard = cards.querySelector('#cards__item-template').content;
+
 // Create a new card
 
 function createCard(link, title) {
-  const templateCard = cards.querySelector('#cards__item-template').content;
-  const cardsClone = templateCard
+    const cardsClone = templateCard
     .querySelector('.cards__item')
     .cloneNode(true);
   const cardImage = cardsClone.querySelector('.cards__image');

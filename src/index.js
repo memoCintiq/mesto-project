@@ -5,7 +5,7 @@ import { enableValidation } from './components/validate.js';
 import { createCard } from './components/card.js';
 
 // Popups
-const popupProfile = document.querySelector('#profile');
+const popupProfile = document.querySelector('#profile');  // Есть ли смысл выносить переменные из файлов в один constants/variables, а затем просто импортировать их?
 const popupCreate = document.querySelector('#create');
 
 // Forms
@@ -25,7 +25,6 @@ const profileAbout = document.querySelector('.profile__about');
 // Buttons
 const buttonOpenEditProfilePopup = document.querySelector('.profile__edit-button');
 const buttonOpenAddCardPopup = document.querySelector('.profile__add-button');
-const closeButtons = document.querySelectorAll('.popup__close-button');
 
 // List of cards
 const cards = document.querySelector('.cards__items');
@@ -48,15 +47,6 @@ function handleFormAddCard(evt) {
   evt.target.reset();
   closePopup(popupCreate);
 }
-
-// Listeners for popup close buttons
-
-closeButtons.forEach(function (button) {
-  const popup = button.closest(".popup");
-  button.addEventListener("click", function () {
-    closePopup(popup);
-  });
-});
 
 // Open popup for editing profile
 
