@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Идт Илья">
-  <link rel="stylesheet" href="./pages/index.css">
   <title>Mesto</title>
 </head>
 
@@ -13,14 +12,14 @@
   <div class="page">
 
     <header class="header">
-      <img src="./images/logo.svg" alt="Логотип Место Россия" class="header__logo">
+      <img src="<%=require('./images/logo.svg')%>" alt="Логотип Место Россия" class="header__logo">
     </header>
 
     <main class="content">
 
       <section class="profile">
         <div class="profile__avatar">
-          <img src="./images/avatar.png" alt="Аватар" class="profile__avatar-image">
+          <img src="<%=require('./images/avatar.png')%>" alt="Аватар" class="profile__avatar-image">
         </div>
         <div class="profile__info">
           <h1 class="profile__name">Жак-Ив Кусто</h1>
@@ -32,7 +31,7 @@
 
       <section class="cards">
         <ul class="cards__items">
-          <template id="cards__item">
+          <template id="cards__item-template">
             <li class="cards__item">
               <img src="#" alt="Отсутствует" class="cards__image">
               <div class="cards__description">
@@ -56,10 +55,30 @@
         <h3 class="popup__title">Редактировать профиль</h3>
         <form class="popup__form" id="profile-form" name="edit-profile">
           <fieldset class="popup__inputs">
-            <input placeholder="Имя" class="popup__input" id="inputName" type="text" name="name" value="Жак-Ив Кусто"
-              required>
-            <input placeholder="О себе" class="popup__input" id="inputAbout" type="text" name="about"
-              value="Исследователь океанов" required>
+            <input
+              placeholder="Имя"
+              class="popup__input"
+              id="inputName"
+              type="text"
+              name="name"
+              value="Жак-Ив Кусто"
+              minlength="2"
+              maxlength="40"
+              pattern="^[a-zA-ZаА-яЯёЁ\s\-]+$"
+              data-error-message="Разрешены только кириллица, латиница, пробелы и дефисы." required>
+            <span class="popup__input-error inputName-error"></span>
+            <input
+              placeholder="О себе"
+              class="popup__input"
+              id="inputAbout"
+              type="text"
+              name="about"
+              value="Исследователь океанов"
+              minlength="2"
+              maxlength="200"
+              pattern="^[a-zA-ZаА-яЯёЁ\s\-]+$"
+              data-error-message="Разрешены только кириллица, латиница, пробелы и дефисы." required>
+            <span class="popup__input-error inputAbout-error"></span>
           </fieldset>
           <button class="popup__save-button" type="submit" title="Сохранить">Сохранить</button>
         </form>
@@ -72,10 +91,28 @@
         <h3 class="popup__title">Новое место</h3>
         <form class="popup__form" id="create-form" name="create-card">
           <fieldset class="popup__inputs">
-            <input placeholder="Название" class="popup__input" id="inputPlace" type="text" name="place" required>
-            <input placeholder="Ссылка на картинку" class="popup__input" id="inputUrl" type="text" name="url" required>
+            <input
+              placeholder="Название"
+              class="popup__input"
+              id="inputPlace"
+              type="text"
+              name="place"
+              minlength="2"
+              maxlength="30"
+              pattern="^[a-zA-ZаА-яЯёЁ\s\-]+$"
+              data-error-message="Разрешены только кириллица, латиница, пробелы и дефисы." required>
+            <span class="popup__input-error inputPlace-error"></span>
+            <input
+              placeholder="Ссылка на картинку"
+              class="popup__input"
+              id="inputUrl"
+              type="text"
+              name="url"
+              pattern="(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])"
+              data-error-message="Введите адрес сайта." required>
+            <span class="popup__input-error inputUrl-error"></span>
           </fieldset>
-          <button class="popup__create-button" type="submit" title="Создать">Создать</button>
+          <button class="popup__save-button" type="submit" title="Создать">Создать</button>
         </form>
       </div>
     </div>
@@ -89,8 +126,6 @@
     </div>
 
   </div>
-  <script src="./pages/constants.js" defer></script>
-  <script src="./pages/index.js" defer></script>
 </body>
 
 </html>
