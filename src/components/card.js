@@ -12,7 +12,7 @@ const templateCard = cards.querySelector('#cards__item-template').content;
 // Create a new card
 
 function createCard(link, title) {
-    const cardsClone = templateCard
+  const cardsClone = templateCard
     .querySelector('.cards__item')
     .cloneNode(true);
   const cardImage = cardsClone.querySelector('.cards__image');

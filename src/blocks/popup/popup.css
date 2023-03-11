@@ -10,6 +10,7 @@
   top: 0;
   width: 100vw;
   visibility: hidden;
-  transition: visibility .5s, opacity .5s;
-  background: rgba(0, 0, 0, .9);
+  opacity: 0;
+  transition: .3s ease-in-out;
+  background: rgba(0, 0, 0, .5);
 }
