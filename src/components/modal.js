@@ -22,10 +22,6 @@ function openPopup(popup) {
 function closePopup(popup) {
   popup.classList.remove('popup_opened');
   document.removeEventListener('keydown', closePopupEsc);
-  const currentlyActiveErrors = popup.querySelectorAll('.popup__input-error_active');
-  currentlyActiveErrors.forEach((error) => {
-    error.classList.remove('popup__input-error_active');
-  });
 }
 
 function closePopupEsc(evt) {
