@@ -14,3 +14,7 @@
   transition: .3s ease-in-out;
   background: rgba(0, 0, 0, .5);
 }
+
+.popup + #image {
+  background: rgba(0, 0, 0, .9);
+}
