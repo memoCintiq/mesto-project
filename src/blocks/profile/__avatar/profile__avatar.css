@@ -5,8 +5,14 @@
   display: flex;
   height: 120px;
   justify-content: center;
-  margin: 0 30px 0 0;
+  margin: 0;
   width: 120px;
+  transition: all .2s ease-in-out;
+}
+
+.profile__avatar:hover {
+  cursor: pointer;
+  opacity: .2;
 }
 
 @media screen and (max-width: 1023px) {

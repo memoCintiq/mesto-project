@@ -1,26 +1,44 @@
 import './pages/index.css';
-import { settings } from './components/constants.js';
+import { settings, user } from './components/constants.js';
 import { openPopup, closePopup } from './components/modal.js';
 import { enableValidation } from './components/validate.js';
-import { createCard } from './components/card.js';
+import {
+  createCard,
+  addCard,
+  addCardList
+} from './components/card.js';
+import {
+  getProfileRequest,
+  setProfileRequest,
+  changeAvatarRequest,
+  getCardsRequest,
+  addCardRequest,
+} from './components/api.js';
+
+import { renderLoading} from './components/utils';
 
 // Popups
-const popupProfile = document.querySelector('#profile');  // Есть ли смысл выносить переменные из файлов в один constants/variables, а затем просто импортировать их?
+const popupProfile = document.querySelector('#profile');
 const popupCreate = document.querySelector('#create');
+const popupAvatar = document.querySelector('#avatar');
 
 // Forms
 const formProfile = document.querySelector('#profile-form');
 const formAddCard = document.querySelector('#create-form');
+const formChangeAvatar = document.querySelector('#avatar-form');
+
 
 // Inputs
 const inputName = formProfile.querySelector('#inputName');
 const inputAbout = formProfile.querySelector('#inputAbout');
 const inputPlace = formAddCard.querySelector('#inputPlace');
 const inputUrl = formAddCard.querySelector('#inputUrl');
+const inputAvatarUrl = formChangeAvatar.querySelector('#avatarUrl');
 
 // Profile data
 const profileName = document.querySelector('.profile__name');
 const profileAbout = document.querySelector('.profile__about');
+const profileAvatar = document.querySelector('.profile__avatar-image');
 
 // Buttons
 const buttonOpenEditProfilePopup = document.querySelector('.profile__edit-button');
@@ -29,24 +47,78 @@ const buttonOpenAddCardPopup = document.querySelector('.profile__add-button');
 // List of cards
 const cards = document.querySelector('.cards__items');
 
+// Get data from server
+
+Promise.all([getProfileRequest(), getCardsRequest()])
+  .then(([profile]) => {
+    profileName.textContent = profile.name;
+    profileAbout.textContent = profile.about;
+    profileAvatar.src = profile.avatar;
+    user.id = profile._id;
+    user.name = profile.name;
+  })
+  .then(() => {
+    getCardsRequest().then((item) => {
+      addCardList(item, cards);
+    });
+  })
+  .catch((rej) => {
+    console.log(rej);
+  });
+
 
 // Handlers for editing profile and adding a card
 
 function handleFormProfile(evt) {
   evt.preventDefault();
-  profileName.textContent = inputName.value;
-  profileAbout.textContent = inputAbout.value;
-  closePopup(popupProfile);
+  renderLoading(true, evt);
+  setProfileRequest(inputName.value, inputAbout.value)
+    .then((res) => {
+      profileName.textContent = res.name;
+      profileAbout.textContent = res.about;
+      closePopup(popupProfile);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, evt);
+    });
 }
 
 function handleFormAddCard(evt) {
   evt.preventDefault();
-  const title = inputPlace.value;
-  const link = inputUrl.value;
-  cards.prepend(createCard(link, title));
-  evt.target.reset();
-  closePopup(popupCreate);
+  renderLoading(true, evt);
+  addCardRequest(inputPlace.value, inputUrl.value)
+    .then((card) => {
+      addCard(createCard(card), cards);
+      closePopup(popupCreate);
+      evt.target.reset();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, evt);
+    });
 }
+
+const handleFormChangeAvatar = (evt) => {
+  evt.preventDefault();
+  renderLoading(true, evt);
+  changeAvatarRequest(inputAvatarUrl.value)
+    .then((res) => {
+      profileAvatar.src = res.avatar;
+      closePopup(popupAvatar);
+      evt.target.reset();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, evt);
+    });
+};
 
 // Open popup for editing profile
 
@@ -62,12 +134,18 @@ buttonOpenAddCardPopup.addEventListener("click", function () {
   openPopup(popupCreate);
 });
 
+profileAvatar.addEventListener("click", function () {
+  openPopup(popupAvatar);
+});
+
 
 // Submit buttons listeners+handlers
 
 formProfile.addEventListener("submit", handleFormProfile);
 
 formAddCard.addEventListener("submit", handleFormAddCard);
+
+formChangeAvatar.addEventListener("submit", handleFormChangeAvatar);
 
 // Validation
 
