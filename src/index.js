@@ -1,7 +1,7 @@
 import './pages/index.css';
 import { settings, user } from './components/constants.js';
 import { openPopup, closePopup } from './components/modal.js';
-import { enableValidation } from './components/validate.js';
+// import { enableValidation } from './components/FormValidator.js';
 import {
   createCard,
   addCard,
@@ -16,6 +16,8 @@ import {
 } from './components/api.js';
 
 import { renderLoading} from './components/utils';
+
+import FormValidator from './components/FormValidator.js';
 
 // Popups
 const popupProfile = document.querySelector('#profile');
@@ -149,4 +151,12 @@ formChangeAvatar.addEventListener("submit", handleFormChangeAvatar);
 
 // Validation
 
-enableValidation(settings);
+// enableValidation(settings); - старый код
+
+const formProfileValid = new FormValidator(settings, formProfile);
+const formAddCardValid = new FormValidator(settings, formAddCard);
+const formChangeAvatarValid = new FormValidator(settings, formChangeAvatar);
+
+formProfileValid.enableValidation();
+formAddCardValid.enableValidation();
+formChangeAvatarValid.enableValidation();
