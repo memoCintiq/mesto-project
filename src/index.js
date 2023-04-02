@@ -1,6 +1,6 @@
 import './pages/index.css';
 import { settings, user } from './components/constants.js';
-import { openPopup, closePopup } from './components/modal.js';
+// import { openPopup, closePopup } from './components/Popup.js';
 // import { enableValidation } from './components/FormValidator.js';
 import {
   createCard,
@@ -18,11 +18,14 @@ import {
 import { renderLoading} from './components/utils';
 
 import FormValidator from './components/FormValidator.js';
+import PopupWithImage from './components/PopupWithImage.js';
+import PopupWithForm from './components/PopupWithForm.js';
 
 // Popups
 const popupProfile = document.querySelector('#profile');
 const popupCreate = document.querySelector('#create');
 const popupAvatar = document.querySelector('#avatar');
+const popupImage = document.querySelector('#image');
 
 // Forms
 const formProfile = document.querySelector('#profile-form');
@@ -71,56 +74,56 @@ Promise.all([getProfileRequest(), getCardsRequest()])
 
 // Handlers for editing profile and adding a card
 
-function handleFormProfile(evt) {
-  evt.preventDefault();
-  renderLoading(true, evt);
-  setProfileRequest(inputName.value, inputAbout.value)
-    .then((res) => {
-      profileName.textContent = res.name;
-      profileAbout.textContent = res.about;
-      closePopup(popupProfile);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      renderLoading(false, evt);
-    });
-}
+// function handleFormProfile(evt) {
+//   evt.preventDefault();
+//   renderLoading(true, evt);
+//   setProfileRequest(inputName.value, inputAbout.value)
+//     .then((res) => {
+//       profileName.textContent = res.name;
+//       profileAbout.textContent = res.about;
+//       closePopup(popupProfile);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     })
+//     .finally(() => {
+//       renderLoading(false, evt);
+//     });
+// }
 
-function handleFormAddCard(evt) {
-  evt.preventDefault();
-  renderLoading(true, evt);
-  addCardRequest(inputPlace.value, inputUrl.value)
-    .then((card) => {
-      addCard(createCard(card), cards);
-      closePopup(popupCreate);
-      evt.target.reset();
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      renderLoading(false, evt);
-    });
-}
+// function handleFormAddCard(evt) {
+//   evt.preventDefault();
+//   renderLoading(true, evt);
+//   addCardRequest(inputPlace.value, inputUrl.value)
+//     .then((card) => {
+//       addCard(createCard(card), cards);
+//       closePopup(popupCreate);
+//       evt.target.reset();
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     })
+//     .finally(() => {
+//       renderLoading(false, evt);
+//     });
+// }
 
-const handleFormChangeAvatar = (evt) => {
-  evt.preventDefault();
-  renderLoading(true, evt);
-  changeAvatarRequest(inputAvatarUrl.value)
-    .then((res) => {
-      profileAvatar.src = res.avatar;
-      closePopup(popupAvatar);
-      evt.target.reset();
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      renderLoading(false, evt);
-    });
-};
+// const handleFormChangeAvatar = (evt) => {
+//   evt.preventDefault();
+//   renderLoading(true, evt);
+//   changeAvatarRequest(inputAvatarUrl.value)
+//     .then((res) => {
+//       profileAvatar.src = res.avatar;
+//       closePopup(popupAvatar);
+//       evt.target.reset();
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     })
+//     .finally(() => {
+//       renderLoading(false, evt);
+//     });
+// };
 
 // Open popup for editing profile
 
@@ -143,11 +146,11 @@ profileAvatar.addEventListener("click", function () {
 
 // Submit buttons listeners+handlers
 
-formProfile.addEventListener("submit", handleFormProfile);
+// formProfile.addEventListener("submit", handleFormProfile);
 
-formAddCard.addEventListener("submit", handleFormAddCard);
+// formAddCard.addEventListener("submit", handleFormAddCard);
 
-formChangeAvatar.addEventListener("submit", handleFormChangeAvatar);
+// formChangeAvatar.addEventListener("submit", handleFormChangeAvatar);
 
 // Validation
 
@@ -160,3 +163,9 @@ const formChangeAvatarValid = new FormValidator(settings, formChangeAvatar);
 formProfileValid.enableValidation();
 formAddCardValid.enableValidation();
 formChangeAvatarValid.enableValidation();
+
+// попап с картинкой
+
+const popupWithImage = new PopupWithImage(popupImage);
+// popupWithImage.setEventListeners();
+

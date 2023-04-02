@@ -1,5 +1,5 @@
 import { user } from '../components/constants.js';
-import { createPopupImageZoom } from '../components/modal.js';
+// import { createPopupImageZoom } from './Popup.js';
 import { removeCardRequest, setLikeRequest, removeLikeRequest } from './api.js';
 
 // Getting a card template
