@@ -7,19 +7,20 @@ import {
   addCard,
   addCardList
 } from './components/card.js';
-import {
-  getProfileRequest,
-  setProfileRequest,
-  changeAvatarRequest,
-  getCardsRequest,
-  addCardRequest,
-} from './components/api.js';
+// import {
+//   getProfileRequest,
+//   setProfileRequest,
+//   changeAvatarRequest,
+//   getCardsRequest,
+//   addCardRequest,
+// } from './components/api.js';
 
 import { renderLoading} from './components/utils';
 
 import FormValidator from './components/FormValidator.js';
 import PopupWithImage from './components/PopupWithImage.js';
 import PopupWithForm from './components/PopupWithForm.js';
+import Api from './components/Api.js';
 
 // Popups
 const popupProfile = document.querySelector('#profile');
@@ -52,9 +53,17 @@ const buttonOpenAddCardPopup = document.querySelector('.profile__add-button');
 // List of cards
 const cards = document.querySelector('.cards__items');
 
+const api = new Api ({
+  baseUrl: 'https://nomoreparties.co/v1/plus-cohort-20',
+  headers: {
+    authorization: 'fc4830a2-99fd-4452-a8e2-34e875dbc10e',
+    'Content-Type': 'application/json',
+  },
+});
+
 // Get data from server
 
-Promise.all([getProfileRequest(), getCardsRequest()])
+Promise.all([api.getProfileRequest(), api.getCardsRequest()])
   .then(([profile]) => {
     profileName.textContent = profile.name;
     profileAbout.textContent = profile.about;
@@ -63,7 +72,7 @@ Promise.all([getProfileRequest(), getCardsRequest()])
     user.name = profile.name;
   })
   .then(() => {
-    getCardsRequest().then((item) => {
+    api.getCardsRequest().then((item) => {
       addCardList(item, cards);
     });
   })

@@ -1,28 +1,34 @@
-import { request } from './utils.js';
+export default class Api {
+  constructor(option) {
+    this._baseUrl = option.baseUrl;
+    this._headers = option.headers;
+  }
 
-const settings = {
-  baseUrl: 'https://nomoreparties.co/v1/plus-cohort-20',
-  headers: {
-    authorization: 'fc4830a2-99fd-4452-a8e2-34e875dbc10e',
-    'Content-Type': 'application/json',
-  },
-};
+  _checkResponse(res) {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
+  _request(url, options) {
+    return fetch(url, options).then(this._checkResponse);
+  }
 
-// Get user profile
+  // Get user profile
 
-const getProfileRequest = () => {
-  return request(`${settings.baseUrl}/users/me`, {
+getProfileRequest() {
+  return this._request(`${this._baseUrl}/users/me`, {
     method: 'GET',
-    headers: settings.headers,
+    headers: this._headers,
   });
 };
 
 // Change user profile
 
-const setProfileRequest = (inputName, inputAbout) => {
-  return request(`${settings.baseUrl}/users/me`, {
+setProfileRequest(inputName, inputAbout) {
+  return this._request(`${this._baseUrl}/users/me`, {
     method: 'PATCH',
-    headers: settings.headers,
+    headers: this._headers,
     body: JSON.stringify({
       name: inputName,
       about: inputAbout,
@@ -32,10 +38,10 @@ const setProfileRequest = (inputName, inputAbout) => {
 
 // Change user avatar
 
-const changeAvatarRequest = (inputUrl) => {
-  return request(`${settings.baseUrl}/users/me/avatar`, {
+changeAvatarRequest(inputUrl) {
+  return this._request(`${this._baseUrl}/users/me/avatar`, {
     method: 'PATCH',
-    headers: settings.headers,
+    headers: this._headers,
     body: JSON.stringify({
       avatar: inputUrl,
     }),
@@ -44,19 +50,19 @@ const changeAvatarRequest = (inputUrl) => {
 
 // Get cards
 
-const getCardsRequest = () => {
-  return request(`${settings.baseUrl}/cards`, {
+getCardsRequest() {
+  return this._request(`${this._baseUrl}/cards`, {
     method: 'GET',
-    headers: settings.headers,
+    headers: this._headers,
   });
 };
 
 // Add and remove card
 
-const addCardRequest = (inputTitle, inputUrl) => {
-  return request(`${settings.baseUrl}/cards`, {
+addCardRequest(inputTitle, inputUrl) {
+  return this._request(`${this._baseUrl}/cards`, {
     method: 'POST',
-    headers: settings.headers,
+    headers: this._headers,
     body: JSON.stringify({
       name: inputTitle,
       link: inputUrl,
@@ -64,37 +70,27 @@ const addCardRequest = (inputTitle, inputUrl) => {
   });
 };
 
-const removeCardRequest = (cardId) => {
-  return request(`${settings.baseUrl}/cards/${cardId}`, {
+removeCardRequest(cardId) {
+  return this._request(`${this._baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
-    headers: settings.headers,
+    headers: this._headers,
   });
 };
 
 // Set and remove like
 
-const setLikeRequest = (cardId) => {
-  return request(`${settings.baseUrl}/cards/likes/${cardId}`, {
+setLikeRequest(cardId) {
+  return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
     method: 'PUT',
-    headers: settings.headers,
+    headers: this._headers,
   });
 };
 
-const removeLikeRequest = (cardId) => {
-  return request(`${settings.baseUrl}/cards/likes/${cardId}`, {
+removeLikeRequest(cardId) {
+  return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
     method: 'DELETE',
-    headers: settings.headers,
+    headers: this._headers,
   });
 };
 
-export {
-  settings,
-  getProfileRequest,
-  setProfileRequest,
-  changeAvatarRequest,
-  getCardsRequest,
-  addCardRequest,
-  removeCardRequest,
-  setLikeRequest,
-  removeLikeRequest,
-};
+}
