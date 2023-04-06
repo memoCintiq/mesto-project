@@ -15,12 +15,12 @@ import {
 //   addCardRequest,
 // } from './components/api.js';
 
-import { renderLoading} from './components/utils';
+// import { renderLoading} from './components/utils';
 
 import FormValidator from './components/FormValidator.js';
 import PopupWithImage from './components/PopupWithImage.js';
 import PopupWithForm from './components/PopupWithForm.js';
-import Api from './components/Api.js';
+import Api from './components/api.js';
 
 // Popups
 const popupProfile = document.querySelector('#profile');
@@ -154,6 +154,8 @@ profileAvatar.addEventListener("click", function () {
 
 
 // Submit buttons listeners+handlers
+
+
 
 // formProfile.addEventListener("submit", handleFormProfile);
 
