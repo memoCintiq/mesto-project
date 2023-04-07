@@ -1,5 +1,5 @@
 import './pages/index.css';
-import { settings } from './components/constants.js';
+import { settings, user } from './components/constants.js';
 // import { openPopup, closePopup } from './components/Popup.js';
 // import { enableValidation } from './components/FormValidator.js';
 // import { renderLoading} from './components/utils';
@@ -56,18 +56,10 @@ const userInfo = new UserInfo({
 
 const userId = '';
 
+
 const cardList = new Section({
     renderer: (item) => {
-      const card = new Card(
-        userId,
-        {
-          handleCardClick: handleImageClick,
-          handleLikeClick: handleLikeClick,
-          handleDeleteClick: handleDeleteClick
-        },
-        '.cards__item-template',
-        item,
-      );
+      const card = new Card(item, userId);
       const cardElement = card.generate();
 
       cardList.addItem(cardElement);
@@ -100,13 +92,23 @@ const handleLikeClick = (cardId, isLiked) => {
   api.changeLikeRequest(cardId, isLiked);
 };
 
-const handleDeleteClick = (cardId) => {
-  api.removeCardRequest(cardId);
+const handleDeleteClick = (id) => {
+  api.removeCardRequest(id);
 };
 
 const handleImageClick = (link, title) => {
   popupWithImage.open(link, title);
 }
+
+//   cartButton.addEventListener('click', function (evt) {
+//     removeCardRequest(card._id)
+//       .then(() => {
+//         evt.target.closest('.cards__item').remove();
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//   });
 
 // Handlers for editing profile and adding a card
 
@@ -163,21 +165,21 @@ const handleImageClick = (link, title) => {
 
 // Open popup for editing profile
 
-buttonOpenEditProfilePopup.addEventListener("click", function () {
-  inputName.value = profileName.textContent;
-  inputAbout.value = profileAbout.textContent;
-  openPopup(popupProfile);
-});
+// buttonOpenEditProfilePopup.addEventListener("click", function () {
+//   inputName.value = profileName.textContent;
+//   inputAbout.value = profileAbout.textContent;
+//   openPopup(popupProfile);
+// });
 
-// Open popup for adding card
+// // Open popup for adding card
 
-buttonOpenAddCardPopup.addEventListener("click", function () {
-  openPopup(popupCreate);
-});
+// buttonOpenAddCardPopup.addEventListener("click", function () {
+//   openPopup(popupCreate);
+// });
 
-profileAvatar.addEventListener("click", function () {
-  openPopup(popupAvatar);
-});
+// profileAvatar.addEventListener("click", function () {
+//   openPopup(popupAvatar);
+// });
 
 
 // Submit buttons listeners+handlers
