@@ -88,6 +88,28 @@ api.getAppInfo()
   .catch(rej => console.log(rej));
 
 
+const handleLikeClick = (cardId, isLiked) => {
+  api.changeLikeRequest(cardId, isLiked);
+};
+
+const handleDeleteClick = (id) => {
+  api.removeCardRequest(id);
+};
+
+const handleImageClick = (link, title) => {
+  popupWithImage.open(link, title);
+}
+
+//   cartButton.addEventListener('click', function (evt) {
+//     removeCardRequest(card._id)
+//       .then(() => {
+//         evt.target.closest('.cards__item').remove();
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//   });
+
 // Handlers for editing profile and adding a card
 
 // function handleFormProfile(evt) {
