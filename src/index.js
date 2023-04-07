@@ -49,10 +49,12 @@ const api = new Api ({
 });
 
 const userInfo = new UserInfo({
-  userSelector: '.profile__name',
+  nameSelector: '.profile__name',
   aboutSelector: '.profile__about',
   avatarSelector: '.profile__avatar-image'
 });
+
+console.log(userInfo._userName);
 
 const userId = '';
 
@@ -77,10 +79,10 @@ const cardList = new Section({
 '.cards__items'
 );
 
-// Get data from server
+//Get data from server
 
-api.getAppInfo()
-  .then(([cardsArray, userData]) => {
+Promise.all([api.getProfileRequest(), api.getCardsRequest()])
+  .then(([userData, cardsArray]) => {
 
     userId = userData._id;
 
@@ -250,7 +252,7 @@ const popupWithAddCard = new PopupWithForm(popupCreate, {
   handleFormSubmit: ({name, link}) => {
     return api.addCardRequest(name, link)
     .then((card) => {
-      
+
       cardList.addItem(item)
     })
   }
