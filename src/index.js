@@ -54,9 +54,24 @@ const userInfo = new UserInfo({
   avatarSelector: '.profile__avatar-image'
 });
 
-console.log(userInfo._userName);
+let userId = '';
 
-const userId = '';
+api.getAppInfo()
+  .then(([ cardsArray, userData ]) => {
+
+    userId = userData._id;
+
+    userInfo.setUserInfo({
+      userName: userData.name,
+      userAbout: userData.about
+    });
+    userInfo.setUserAvatar({
+      userAvatar: userData.avatar
+    })
+
+    cardList.renderItems(cardsArray);
+  })
+  .catch(rej => console.log(rej));
 
 
 const cardList = new Section({
@@ -81,22 +96,7 @@ const cardList = new Section({
 
 //Get data from server
 
-Promise.all([api.getProfileRequest(), api.getCardsRequest()])
-  .then(([userData, cardsArray]) => {
 
-    userId = userData._id;
-
-    userInfo.setUserInfo({
-      userName: userData.name,
-      userAbout: userData.about
-    });
-    userInfo.setUserAvatar({
-      userAvatar: userData.avatar
-    })
-
-    cardList.renderItems(cardsArray);
-  })
-  .catch(rej => console.log(rej));
 
 
 const handleLikeClick = (cardId, isLiked) => {

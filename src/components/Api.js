@@ -5,101 +5,104 @@ export default class Api {
   }
 
   _checkResponse(res) {
-    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
   }
   _request(url, options) {
     return fetch(url, options).then(this._checkResponse);
   }
 
 
-getAppInfo() {
-  return Promise.all([this.getCardsRequest(), this.getProfileRequest()]);
-}
+  getAppInfo() {
+    return Promise.all([this.getCardsRequest(), this.getProfileRequest()]);
+  }
 
-// Get user profile
+  // Get user profile
 
-getProfileRequest() {
-  return this._request(`${this._baseUrl}/users/me`, {
-    method: 'GET',
-    headers: this._headers,
-  });
-};
+  getProfileRequest() {
+    return this._request(`${this._baseUrl}/users/me`, {
+      method: 'GET',
+      headers: this._headers,
+    });
+  };
 
-// Change user profile
+  // Change user profile
 
-setProfileRequest(inputName, inputAbout) {
-  return this._request(`${this._baseUrl}/users/me`, {
-    method: 'PATCH',
-    headers: this._headers,
-    body: JSON.stringify({
-      name: inputName,
-      about: inputAbout,
-    }),
-  });
-};
+  setProfileRequest(inputName, inputAbout) {
+    return this._request(`${this._baseUrl}/users/me`, {
+      method: 'PATCH',
+      headers: this._headers,
+      body: JSON.stringify({
+        name: inputName,
+        about: inputAbout,
+      }),
+    });
+  };
 
-// Change user avatar
+  // Change user avatar
 
-changeAvatarRequest(inputUrl) {
-  return this._request(`${this._baseUrl}/users/me/avatar`, {
-    method: 'PATCH',
-    headers: this._headers,
-    body: JSON.stringify({
-      avatar: inputUrl,
-    }),
-  });
-};
+  changeAvatarRequest(inputUrl) {
+    return this._request(`${this._baseUrl}/users/me/avatar`, {
+      method: 'PATCH',
+      headers: this._headers,
+      body: JSON.stringify({
+        avatar: inputUrl,
+      }),
+    });
+  };
 
-// Get cards
+  // Get cards
 
-getCardsRequest() {
-  return this._request(`${this._baseUrl}/cards`, {
-    method: 'GET',
-    headers: this._headers,
-  });
-};
+  getCardsRequest() {
+    return this._request(`${this._baseUrl}/cards`, {
+      method: 'GET',
+      headers: this._headers,
+    });
+  };
 
-// Add and remove card
+  // Add and remove card
 
-addCardRequest(inputTitle, inputUrl) {
-  return this._request(`${this._baseUrl}/cards`, {
-    method: 'POST',
-    headers: this._headers,
-    body: JSON.stringify({
-      name: inputTitle,
-      link: inputUrl,
-    }),
-  });
-};
+  addCardRequest(inputTitle, inputUrl) {
+    return this._request(`${this._baseUrl}/cards`, {
+      method: 'POST',
+      headers: this._headers,
+      body: JSON.stringify({
+        name: inputTitle,
+        link: inputUrl,
+      }),
+    });
+  };
 
-removeCardRequest(cardId) {
-  return this._request(`${this._baseUrl}/cards/${cardId}`, {
-    method: 'DELETE',
-    headers: this._headers,
-  });
-};
+  removeCardRequest(cardId) {
+    return this._request(`${this._baseUrl}/cards/${cardId}`, {
+      method: 'DELETE',
+      headers: this._headers,
+    });
+  };
 
-// Set and remove like
+  // Set and remove like
 
-setLikeRequest(cardId) {
-  return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
-    method: 'PUT',
-    headers: this._headers,
-  });
-};
+  setLikeRequest(cardId) {
+    return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
+      method: 'PUT',
+      headers: this._headers,
+    });
+  };
 
-removeLikeRequest(cardId) {
-  return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
-    method: 'DELETE',
-    headers: this._headers,
-  });
-};
+  removeLikeRequest(cardId) {
+    return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
+      method: 'DELETE',
+      headers: this._headers,
+    });
+  };
 
-changeLikeRequest(cardId, isLiked) {
-  return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
-    method: isLiked ? 'PUT' : 'DELETE',
-    headers: this._headers,
-  });
-}
+  changeLikeRequest(cardId, isLiked) {
+    return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
+      method: isLiked ? 'PUT' : 'DELETE',
+      headers: this._headers,
+    });
+  }
 
 }
