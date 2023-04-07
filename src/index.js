@@ -58,14 +58,23 @@ const userId = '';
 
 
 const cardList = new Section({
-    renderer: (item) => {
-      const card = new Card(item, userId);
-      const cardElement = card.generate();
+  renderer: (item) => {
+    const card = new Card(
+      userId,
+      {
+        handleCardClick: handleImageClick,
+        handleLikeClick: handleLikeClick,
+        handleDeleteClick: handleDeleteClick
+      },
+      '.cards__item-template',
+      item,
+    );
+    const cardElement = card.generate();
 
-      cardList.addItem(cardElement);
-    }
-  },
-  '.cards__items'
+    cardList.addItem(cardElement);
+  }
+},
+'.cards__items'
 );
 
 // Get data from server
@@ -207,5 +216,43 @@ formChangeAvatarValid.enableValidation();
 // попап с картинкой
 
 const popupWithImage = new PopupWithImage(popupImage);
-// popupWithImage.setEventListeners();
+popupWithImage.setEventListeners();
+
+// попап с редактированием профиля
+
+const popupWithEditProfile = new PopupWithForm(popupProfile, {
+  handleFormSubmit: ({userName, userAbout}) => {
+    return api.setProfileRequest(userName, userAbout)
+    .then((profile) => {
+      userInfo.setUserInfo(profile);
+    })
+    .catch(err => {console.log(err)});
+  }
+})
+popupWithEditProfile.setEventListeners();
+
+// попап с редактированием аватара
+
+const popupWithEditAvatar = new PopupWithForm(popupAvatar, {
+  handleFormSubmit: ({userAvatar}) => {
+    return api.changeAvatarRequest(userAvatar)
+    .then((inputUrl) => {
+      userInfo.setUserInfo(inputUrl);
+    })
+    .catch(err => {console.log(err)});
+  }
+})
+popupWithEditAvatar.setEventListeners();
+
+// попап с добавлением карточки
+
+const popupWithAddCard = new PopupWithForm(popupCreate, {
+  handleFormSubmit: ({name, link}) => {
+    return api.addCardRequest(name, link)
+    .then((card) => {
+      
+      cardList.addItem(item)
+    })
+  }
+})
 

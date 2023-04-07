@@ -13,18 +13,9 @@ export default class UserInfo {
     }
   }
 
-  setUserInfo({ userName, userAbout }, handleNewUserInfo) {
+  setUserInfo({ userName, userAbout, userAvatar }) {
     this._userName = userName;
     this._userAbout = userAbout;
-
-    //Обработчик, отправляющий новые значения полей "Имя" и "О себе" на сервер
-    handleNewUserInfo();
-  }
-
-  setUserAvatar({ userAvatar }, handleNewUserAvatar) {
     this._userAvatar = userAvatar;
-
-    //Обработчик, отправляющий новую ссылку на аватар пользователя на сервер
-    handleNewUserAvatar();
   }
 }
