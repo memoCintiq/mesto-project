@@ -95,4 +95,11 @@ removeLikeRequest(cardId) {
   });
 };
 
+changeLikeRequest(cardId, isLiked) {
+  return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
+    method: isLiked ? 'PUT' : 'DELETE',
+    headers: this._headers,
+  });
+}
+
 }
