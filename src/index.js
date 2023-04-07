@@ -2,19 +2,6 @@ import './pages/index.css';
 import { settings, user } from './components/constants.js';
 // import { openPopup, closePopup } from './components/Popup.js';
 // import { enableValidation } from './components/FormValidator.js';
-import {
-  createCard,
-  addCard,
-  addCardList
-} from './components/card.js';
-// import {
-//   getProfileRequest,
-//   setProfileRequest,
-//   changeAvatarRequest,
-//   getCardsRequest,
-//   addCardRequest,
-// } from './components/api.js';
-
 // import { renderLoading} from './components/utils';
 
 import FormValidator from './components/FormValidator.js';
@@ -23,6 +10,7 @@ import PopupWithForm from './components/PopupWithForm.js';
 import Api from './components/Api.js';
 import UserInfo from './components/UserInfo';
 import Section from './components/Section';
+import Card from './components/Card.js';
 
 // Popups
 const popupProfile = document.querySelector('#profile');
