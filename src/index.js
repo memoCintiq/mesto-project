@@ -20,7 +20,9 @@ import {
 import FormValidator from './components/FormValidator.js';
 import PopupWithImage from './components/PopupWithImage.js';
 import PopupWithForm from './components/PopupWithForm.js';
-import Api from './components/api.js';
+import Api from './components/Api.js';
+import UserInfo from './components/UserInfo';
+import Section from './components/Section';
 
 // Popups
 const popupProfile = document.querySelector('#profile');
@@ -50,9 +52,6 @@ const profileAvatar = document.querySelector('.profile__avatar-image');
 const buttonOpenEditProfilePopup = document.querySelector('.profile__edit-button');
 const buttonOpenAddCardPopup = document.querySelector('.profile__add-button');
 
-// List of cards
-const cards = document.querySelector('.cards__items');
-
 const api = new Api ({
   baseUrl: 'https://nomoreparties.co/v1/plus-cohort-20',
   headers: {
@@ -61,24 +60,44 @@ const api = new Api ({
   },
 });
 
+const userInfo = new UserInfo({
+  userSelector: '.profile__name',
+  aboutSelector: '.profile__about',
+  avatarSelector: '.profile__avatar-image'
+});
+
+const userId = '';
+
+
+const cardList = new Section({
+    renderer: (item) => {
+      const card = new Card(item, userId);
+      const cardElement = card.generate();
+
+      cardList.addItem(cardElement);
+    }
+  },
+  '.cards__items'
+);
+
 // Get data from server
 
-Promise.all([api.getProfileRequest(), api.getCardsRequest()])
-  .then(([profile]) => {
-    profileName.textContent = profile.name;
-    profileAbout.textContent = profile.about;
-    profileAvatar.src = profile.avatar;
-    user.id = profile._id;
-    user.name = profile.name;
-  })
-  .then(() => {
-    api.getCardsRequest().then((item) => {
-      addCardList(item, cards);
+api.getAppInfo()
+  .then(([cardsArray, userData]) => {
+
+    userId = userData._id;
+
+    userInfo.setUserInfo({
+      userName: userData.name,
+      userAbout: userData.about
     });
+    userInfo.setUserAvatar({
+      userAvatar: userData.avatar
+    })
+
+    cardList.renderItems(cardsArray);
   })
-  .catch((rej) => {
-    console.log(rej);
-  });
+  .catch(rej => console.log(rej));
 
 
 // Handlers for editing profile and adding a card
