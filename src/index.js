@@ -1,5 +1,5 @@
 import './pages/index.css';
-import { settings, user } from './components/constants.js';
+import { settings } from './components/constants.js';
 // import { openPopup, closePopup } from './components/Popup.js';
 // import { enableValidation } from './components/FormValidator.js';
 // import { renderLoading} from './components/utils';
@@ -56,10 +56,18 @@ const userInfo = new UserInfo({
 
 const userId = '';
 
-
 const cardList = new Section({
     renderer: (item) => {
-      const card = new Card(item, userId);
+      const card = new Card(
+        userId,
+        {
+          handleCardClick: handleImageClick,
+          handleLikeClick: handleLikeClick,
+          handleDeleteClick: handleDeleteClick
+        },
+        '.cards__item-template',
+        item,
+      );
       const cardElement = card.generate();
 
       cardList.addItem(cardElement);
@@ -92,23 +100,13 @@ const handleLikeClick = (cardId, isLiked) => {
   api.changeLikeRequest(cardId, isLiked);
 };
 
-const handleDeleteClick = (id) => {
-  api.removeCardRequest(id);
+const handleDeleteClick = (cardId) => {
+  api.removeCardRequest(cardId);
 };
 
 const handleImageClick = (link, title) => {
   popupWithImage.open(link, title);
 }
-
-//   cartButton.addEventListener('click', function (evt) {
-//     removeCardRequest(card._id)
-//       .then(() => {
-//         evt.target.closest('.cards__item').remove();
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   });
 
 // Handlers for editing profile and adding a card
 
