@@ -5,17 +5,17 @@
 // Getting a card template
 
 export default class Card {
-  constructor(user, {handleCardClick, handleLikeClick, handleDeleteClick}, templateSelector, {name, link, likes, owner, _id}) {
-    this._user = user;
+  constructor(userId, {handleCardClick, handleLikeClick, handleDeleteClick}, templateSelector, item) {
+    this._userId = userId;
     this._handleCardClick = handleCardClick;
     this._handleLikeClick = handleLikeClick;
     this._handleDeleteClick = handleDeleteClick;
     this._templateSelector = templateSelector;
-    this._name = name;
-    this._link - link;
-    this._likes = likes;
-    this._owner = owner;
-    this._id = _id;
+    this._name = item.name;
+    this._link - item.link;
+    this._likes = item.likes;
+    this._owner = item.owner;
+    this._id = item._id;
   }
 
   _getElement() {
@@ -43,7 +43,7 @@ export default class Card {
   }
 
   _checkMyLike() {
-    return this._likes.some(like => like._id === this._user);
+    return this._likes.some(like => like._id === this._userId);
   }
 
   _checkLikes() {
@@ -73,7 +73,7 @@ export default class Card {
     this._cardImage.alt = this._name;
     this._cardName.textContent = this._name;
 
-    if (this._user !== this._owner._id) {
+    if (this._userId !== this._owner._id) {
       this._cartButton.remove();
     }
 
