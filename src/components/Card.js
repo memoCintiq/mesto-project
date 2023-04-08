@@ -1,9 +1,3 @@
-// import { user } from '../components/constants.js';
-// import { createPopupImageZoom } from './Popup.js';
-// import { removeCardRequest, setLikeRequest, removeLikeRequest } from './api.js';
-
-// Getting a card template
-
 export default class Card {
   constructor(userId, {handleCardClick, handleLikeClick, handleDeleteClick}, templateSelector, item) {
     this._userId = userId;
@@ -28,7 +22,9 @@ export default class Card {
 
   _setEventListeners() {
     this._likeButton.addEventListener('click', () => {
-      this._handleLikeClick(this._id, this._checkMyLike());
+      this._handleLikeClick(this, this._checkMyLike());
+      this._switchLikeButtonState();
+      this._switchLikeCounterState();
     });
 
     this._cardImage.addEventListener('click', () => {
@@ -37,8 +33,8 @@ export default class Card {
 
     this._cartButton.addEventListener('click', () => {
       this._handleDeleteClick(this._id)
+      this._deleteElement();
     });
-
   }
 
   _checkMyLike() {
@@ -46,14 +42,22 @@ export default class Card {
   }
 
   _checkLikes() {
-    if (this._checkMyLike()) {
-      this._likeButton.classList.add('cards__like-button_active');
-      this._likeCounter.textContent = this._likes.length;
-    } else {
-      this._likeButton.classList.remove('cards__like-button_active');
-      this._likeCounter.textContent = this._likes.length;
-    }
+    return this._likes.length;
   }
+
+  _switchLikeButtonState() {
+    this._checkMyLike()
+      ? this._likeButton.classList.add('cards__like-button_active')
+      : this._likeButton.classList.remove('cards__like-button_active');
+  }
+
+  _switchLikeCounterState() {
+    this._checkLikes() > 0
+      ? ( this._likeCounter.classList.add('cards__like-counter_active'),
+          this._likeCounter.textContent = this._likes.length )
+      : ( this._likeCounter.classList.remove('cards__like-counter_active'),
+          this._likeCounter.textContent = '');
+   }
 
   _deleteElement() {
     this._element.remove();
@@ -76,124 +80,20 @@ export default class Card {
       this._cartButton.remove();
     }
 
-    this._checkLikes();
-
+    this._switchLikeCounterState();
+    this._switchLikeButtonState();
     this._setEventListeners();
 
     return this._element;
-
   }
 
+  id() {
+    return this._id;
+  }
 
+  setLikeInfo(res) {
+    this._likes = res.likes;
+    this._switchLikeButtonState();
+    this._switchLikeCounterState();
+  }
 }
-
-
-// const templateCard = document.querySelector('#cards__item-template').content;
-
-// const hideCartButton = (owner, button) => {
-//   if (user.id !== owner) {
-//     button.remove();
-//   }
-// };
-
-// // Check and set my user like
-// const checkMyLike = (likes, button) => {
-//   likes.forEach((like) => {
-//     if (like.name === user.name) {
-//       button.classList.add('cards__like-button_active');
-//     }
-//   });
-// };
-
-// // Check and set likes
-// const checkLikes = (likes, counter) => {
-//   if (likes.length > 0) {
-//     counter.classList.add('cards__like-counter_active');
-//     counter.textContent = likes.length;
-//   } else {
-//     counter.classList.remove('cards__like-counter_active');
-//     counter.textContent = '';
-//   }
-// };
-
-// Create a new card
-
-// function createCard(card) {
-//   const cardsClone = templateCard
-//     .querySelector('.cards__item')
-//     .cloneNode(true);
-//   const cardImage = cardsClone.querySelector('.cards__image');
-//   const cardName = cardsClone.querySelector('.cards__title');
-//   const cartButton = cardsClone.querySelector('.cards__delete-button');
-//   const likeButton = cardsClone.querySelector('.cards__like-button');
-//   const likeCounter = cardsClone.querySelector('.cards__like-counter');
-
-//   cardImage.src = card.link;
-//   cardImage.alt = card.name;
-//   cardName.textContent = card.name;
-
-//   cardsClone
-//     .querySelector('.cards__image')
-//     .addEventListener('click', function () {
-//       createPopupImageZoom(card.link, card.name);
-//     });
-
-//   cartButton.addEventListener('click', function (evt) {
-//     removeCardRequest(card._id)
-//       .then(() => {
-//         evt.target.closest('.cards__item').remove();
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   });
-
-//   likeButton.addEventListener('click', (evt) => {
-//     if (evt.target.classList.contains('cards__like-button_active')) {
-//       removeLikeRequest(card._id)
-//         .then((card) => {
-//           checkLikes(card.likes, likeCounter);
-//           checkMyLike(card.likes, evt.target);
-//           evt.target.classList.remove('cards__like-button_active');
-//         })
-//         .catch((err) => {
-//           console.log(err);
-//         });
-//     } else {
-//       setLikeRequest(card._id)
-//         .then((card) => {
-//           checkLikes(card.likes, likeCounter);
-//           checkMyLike(card.likes, evt.target);
-//         })
-//         .catch((err) => {
-//           console.log(err);
-//         });
-//     }
-//   });
-
-//   checkLikes(card.likes, likeCounter);
-//   checkMyLike(card.likes, likeButton);
-//   hideCartButton(card.owner._id, cartButton);
-
-//   return cardsClone;
-// }
-
-// // Add a new card to the container
-
-// const addCard = (card, container) => {
-//   container.prepend(card);
-// };
-
-// // Put cards from list to container
-// const addCardList = (cards, container) => {
-//   cards.reverse().forEach((card) => {
-//     const item = createCard(card);
-//     addCard(item, container);
-//   });
-// };
-
-// export {
-//   createCard,
-//   addCard,
-//   addCardList
-// };

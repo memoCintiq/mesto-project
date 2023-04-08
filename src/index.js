@@ -1,8 +1,17 @@
 import './pages/index.css';
-import { settings, user } from './components/constants.js';
-// import { openPopup, closePopup } from './components/Popup.js';
-// import { enableValidation } from './components/FormValidator.js';
-// import { renderLoading} from './components/utils';
+import {
+  settings,
+  popupProfileSelector,
+  popupCreateSelector,
+  popupAvatarSelector,
+  popupImageSelector,
+  formProfile,
+  formAddCard,
+  formChangeAvatar,
+  profileAvatar,
+  buttonOpenEditProfilePopup,
+  buttonOpenAddCardPopup,
+} from './utils/constants.js';
 
 import FormValidator from './components/FormValidator.js';
 import PopupWithImage from './components/PopupWithImage.js';
@@ -11,35 +20,6 @@ import Api from './components/Api.js';
 import UserInfo from './components/UserInfo';
 import Section from './components/Section';
 import Card from './components/Card.js';
-
-// Popups
-const popupProfile = document.querySelector('#profile');
-const popupCreate = document.querySelector('#create');
-const popupAvatar = document.querySelector('#avatar');
-const popupImage = document.querySelector('#image');
-
-// Forms
-const formProfile = document.querySelector('#profile-form');
-const formAddCard = document.querySelector('#create-form');
-const formChangeAvatar = document.querySelector('#avatar-form');
-
-
-// Inputs
-const inputName = formProfile.querySelector('#inputName');
-const inputAbout = formProfile.querySelector('#inputAbout');
-const inputPlace = formAddCard.querySelector('#inputPlace');
-const inputUrl = formAddCard.querySelector('#inputUrl');
-const inputAvatarUrl = formChangeAvatar.querySelector('#avatarUrl');
-
-// Profile data
-const profileName = document.querySelector('.profile__name');
-const profileAbout = document.querySelector('.profile__about');
-const profileAvatar = document.querySelector('.profile__avatar-image');
-
-// Buttons
-const buttonOpenEditProfilePopup = document.querySelector('.profile__edit-button');
-const buttonOpenAddCardPopup = document.querySelector('.profile__add-button');
-const buttonOpenEditAvatar = document.querySelector
 
 const api = new Api ({
   baseUrl: 'https://nomoreparties.co/v1/plus-cohort-20',
@@ -56,6 +36,53 @@ const userInfo = new UserInfo({
 });
 
 let userId = '';
+
+// Handlers for Card instances
+
+const handleLikeClick = (card, isLiked) => {
+  api.changeLikeRequest(card.id(), isLiked)
+    .then((res) => card.setLikeInfo(res))
+    .catch(rej => console.log(rej));
+};
+
+const handleDeleteClick = (cardId) => {
+  api.removeCardRequest(cardId)
+    .catch(rej => console.log(rej));
+};
+
+const handleImageClick = (link, title) => {
+  popupWithImage.open(link, title);
+};
+
+// Creating Card instance and its markup
+
+const createCard = (userId, cardData) => {
+  const card = new Card(
+      userId,
+      {
+        handleCardClick: handleImageClick,
+        handleLikeClick: handleLikeClick,
+        handleDeleteClick: handleDeleteClick
+      },
+      '#cards__item-template',
+      cardData
+    );
+  const cardElement = card.generate();
+
+  return cardElement;
+}
+
+// Creating Section instance for operating with markup
+
+const cardList = new Section({
+  renderer: (item) => {
+    cardList.addItem(createCard(userId, item));
+  }
+},
+'.cards__items'
+);
+
+//Get data from server
 
 api.getAppInfo()
   .then(([ cardsArray, userData ]) => {
@@ -74,138 +101,7 @@ api.getAppInfo()
   })
   .catch(rej => console.log(rej));
 
-
-const cardList = new Section({
-  renderer: (item) => {
-    console.log(item.link);
-    const card = new Card(
-      userId,
-      {
-        handleCardClick: handleImageClick,
-        handleLikeClick: handleLikeClick,
-        handleDeleteClick: handleDeleteClick
-      },
-      '#cards__item-template',
-      item
-    );
-    const cardElement = card.generate();
-
-    cardList.addItem(cardElement);
-  }
-},
-'.cards__items'
-);
-
-//Get data from server
-
-const handleLikeClick = (cardId, isLiked) => {
-  api.changeLikeRequest(cardId, isLiked);
-};
-
-const handleDeleteClick = (cardId) => {
-  api.removeCardRequest(cardId);
-};
-
-const handleImageClick = (link, title) => {
-  popupWithImage.open(link, title);
-};
-
-
-//   cartButton.addEventListener('click', function (evt) {
-//     removeCardRequest(card._id)
-//       .then(() => {
-//         evt.target.closest('.cards__item').remove();
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   });
-
-// Handlers for editing profile and adding a card
-
-// function handleFormProfile(evt) {
-//   evt.preventDefault();
-//   renderLoading(true, evt);
-//   setProfileRequest(inputName.value, inputAbout.value)
-//     .then((res) => {
-//       profileName.textContent = res.name;
-//       profileAbout.textContent = res.about;
-//       closePopup(popupProfile);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     })
-//     .finally(() => {
-//       renderLoading(false, evt);
-//     });
-// }
-
-// function handleFormAddCard(evt) {
-//   evt.preventDefault();
-//   renderLoading(true, evt);
-//   addCardRequest(inputPlace.value, inputUrl.value)
-//     .then((card) => {
-//       addCard(createCard(card), cards);
-//       closePopup(popupCreate);
-//       evt.target.reset();
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     })
-//     .finally(() => {
-//       renderLoading(false, evt);
-//     });
-// }
-
-// const handleFormChangeAvatar = (evt) => {
-//   evt.preventDefault();
-//   renderLoading(true, evt);
-//   changeAvatarRequest(inputAvatarUrl.value)
-//     .then((res) => {
-//       profileAvatar.src = res.avatar;
-//       closePopup(popupAvatar);
-//       evt.target.reset();
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     })
-//     .finally(() => {
-//       renderLoading(false, evt);
-//     });
-// };
-
-// Open popup for editing profile
-
-// buttonOpenEditProfilePopup.addEventListener("click", function () {
-//   inputName.value = profileName.textContent;
-//   inputAbout.value = profileAbout.textContent;
-//   openPopup(popupProfile);
-// });
-
-// // Open popup for adding card
-
-// buttonOpenAddCardPopup.addEventListener("click", function () {
-//   openPopup(popupCreate);
-// });
-
-// profileAvatar.addEventListener("click", function () {
-//   openPopup(popupAvatar);
-// });
-
-
-// Submit buttons listeners+handlers
-
-
-
-// formProfile.addEventListener("submit", handleFormProfile);
-
-// formAddCard.addEventListener("submit", handleFormAddCard);
-
-// formChangeAvatar.addEventListener("submit", handleFormChangeAvatar);
-
-// Validation
-
-// enableValidation(settings); - старый код
+// Creating validators for each form
 
 const formProfileValid = new FormValidator(settings, formProfile);
 const formAddCardValid = new FormValidator(settings, formAddCard);
@@ -215,88 +111,63 @@ formProfileValid.enableValidation();
 formAddCardValid.enableValidation();
 formChangeAvatarValid.enableValidation();
 
-// попап с картинкой
+// Попап с картинкой
 
-const popupWithImage = new PopupWithImage(popupImage);
+const popupWithImage = new PopupWithImage(popupImageSelector);
 popupWithImage.setEventListeners();
 
-// попап с редактированием профиля
+// Попап с редактированием профиля
 
-const popupWithEditProfile = new PopupWithForm(popupProfile, {
-  handleFormSubmit: ({userName, userAbout}) => {
-    return api.setProfileRequest(userName, userAbout)
+const popupWithEditProfile = new PopupWithForm(popupProfileSelector, {
+  handleFormSubmit: (formValues) => {
+    api.setProfileRequest(formValues.name, formValues.about)
     .then((profile) => {
-      userInfo.setUserInfo(profile);
+      userInfo.setUserInfo({ userName: profile.name, userAbout: profile.about});
     })
     .catch(err => {console.log(err)});
   }
-})
+});
 popupWithEditProfile.setEventListeners();
 
 buttonOpenEditProfilePopup.addEventListener('click', () => {
+  formProfileValid.resetValidation();
+  const profile = userInfo.getUserInfo();
+  popupWithEditProfile.setInputValues(profile);
   popupWithEditProfile.open();
 })
 
-// попап с редактированием аватара
+// Попап с редактированием аватара
 
-const popupWithEditAvatar = new PopupWithForm(popupAvatar, {
-  handleFormSubmit: ({userAvatar}) => {
-    return api.changeAvatarRequest(userAvatar)
-    .then((inputUrl) => {
-      userInfo.setUserInfo(inputUrl);
+const popupWithEditAvatar = new PopupWithForm(popupAvatarSelector, {
+  handleFormSubmit: (formValues) => {
+    api.changeAvatarRequest(formValues.avatarUrl)
+    .then((res) => {
+      userInfo.setUserAvatar({ userAvatar: res.avatar });
     })
     .catch(err => {console.log(err)});
   }
-})
+});
 popupWithEditAvatar.setEventListeners();
 
 profileAvatar.addEventListener('click', () => {
-  popupWithEditAvatar.open();})
+  formChangeAvatarValid.resetValidation();
+  popupWithEditAvatar.open();
+})
 
-// попап с добавлением карточки
+// Попап с добавлением карточки
 
-const popupWithAddCard = new PopupWithForm(popupCreate, {
-  handleFormSubmit: ({name, link}) => {
-    return api.addCardRequest(name, link)
+const popupWithAddCard = new PopupWithForm(popupCreateSelector, {
+  handleFormSubmit: (formValues) => {
+    api.addCardRequest(formValues.place, formValues.url)
     .then((card) => {
-
-      cardList.addItem(createCard(card, userId))
+      cardList.addItem(createCard(userId, card));
     })
     .catch(err => {console.log(err)});
   }
-})
-
+});
 popupWithAddCard.setEventListeners();
 
 buttonOpenAddCardPopup.addEventListener('click', () => {
+  formAddCardValid.resetValidation();
   popupWithAddCard.open();
 })
-
-// const cardList = new Section({
-//   renderer: (item, userId) => {
-//     cardList.addItem(createCard(item, userId));
-//   }
-// });
-
-// const createCard = (item, user) => {
-//   const card = new Card({userId: user, templateSelector: '#cards__item-template', item: item, 
-//   handleLikeClick: (cardId) => {
-//     api.changeLikeRequest(cardId)
-//     .then((res) => {
-//       card.checkLikes(res)
-//     })
-//     .catch(err => {console.log(err)});
-//   },
-
-//   handleDeleteClick: (cardId, card) => {
-//     api.removeCardRequest(cardId)
-//     .then(() => {card.deleteElement()})
-//   },
-
-//   handleImageClick: () => {
-//     popupWithImage.open(link, title)
-//   }
-
-
-// })
-// }

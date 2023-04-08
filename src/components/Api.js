@@ -10,6 +10,7 @@ export default class Api {
     }
     return Promise.reject(`Ошибка: ${res.status}`);
   }
+
   _request(url, options) {
     return fetch(url, options).then(this._checkResponse);
   }
@@ -24,9 +25,9 @@ export default class Api {
   getProfileRequest() {
     return this._request(`${this._baseUrl}/users/me`, {
       method: 'GET',
-      headers: this._headers,
+      headers: this._headers
     });
-  };
+  }
 
   // Change user profile
 
@@ -39,7 +40,7 @@ export default class Api {
         about: inputAbout,
       }),
     });
-  };
+  }
 
   // Change user avatar
 
@@ -51,16 +52,16 @@ export default class Api {
         avatar: inputUrl,
       }),
     });
-  };
+  }
 
   // Get cards
 
   getCardsRequest() {
     return this._request(`${this._baseUrl}/cards`, {
       method: 'GET',
-      headers: this._headers,
+      headers: this._headers
     });
-  };
+  }
 
   // Add and remove card
 
@@ -73,35 +74,21 @@ export default class Api {
         link: inputUrl,
       }),
     });
-  };
+  }
 
   removeCardRequest(cardId) {
     return this._request(`${this._baseUrl}/cards/${cardId}`, {
       method: 'DELETE',
-      headers: this._headers,
+      headers: this._headers
     });
-  };
+  }
 
   // Set and remove like
 
-  setLikeRequest(cardId) {
-    return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
-      method: 'PUT',
-      headers: this._headers,
-    });
-  };
-
-  removeLikeRequest(cardId) {
-    return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
-      method: 'DELETE',
-      headers: this._headers,
-    });
-  };
-
   changeLikeRequest(cardId, isLiked) {
     return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
-      method: isLiked ? 'PUT' : 'DELETE',
-      headers: this._headers,
+      method: isLiked ? 'DELETE' : 'PUT',
+      headers: this._headers
     });
   }
 
