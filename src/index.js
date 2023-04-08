@@ -231,6 +231,10 @@ const popupWithEditProfile = new PopupWithForm(popupProfile, {
 })
 popupWithEditProfile.setEventListeners();
 
+buttonOpenEditProfilePopup.addEventListener('click', () => {
+  popupWithEditProfile.open();
+})
+
 // попап с редактированием аватара
 
 const popupWithEditAvatar = new PopupWithForm(popupAvatar, {
@@ -254,5 +258,11 @@ const popupWithAddCard = new PopupWithForm(popupCreate, {
       cardList.addItem(item)
     })
   }
+})
+
+popupWithAddCard.setEventListeners();
+
+buttonOpenAddCardPopup.addEventListener('click', () => {
+  popupWithAddCard.open();
 })
 
