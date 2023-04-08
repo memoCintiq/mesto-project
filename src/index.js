@@ -76,6 +76,7 @@ api.getAppInfo()
 
 const cardList = new Section({
   renderer: (item) => {
+    console.log(item.link);
     const card = new Card(
       userId,
       {
@@ -83,8 +84,8 @@ const cardList = new Section({
         handleLikeClick: handleLikeClick,
         handleDeleteClick: handleDeleteClick
       },
-      '.cards__item-template',
-      item,
+      '#cards__item-template',
+      item
     );
     const cardElement = card.generate();
 
@@ -96,20 +97,17 @@ const cardList = new Section({
 
 //Get data from server
 
-
-
-
 const handleLikeClick = (cardId, isLiked) => {
   api.changeLikeRequest(cardId, isLiked);
 };
 
-const handleDeleteClick = (id) => {
-  api.removeCardRequest(id);
+const handleDeleteClick = (cardId) => {
+  api.removeCardRequest(cardId);
 };
 
 const handleImageClick = (link, title) => {
   popupWithImage.open(link, title);
-}
+};
 
 //   cartButton.addEventListener('click', function (evt) {
 //     removeCardRequest(card._id)

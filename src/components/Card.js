@@ -12,7 +12,7 @@ export default class Card {
     this._handleDeleteClick = handleDeleteClick;
     this._templateSelector = templateSelector;
     this._name = item.name;
-    this._link - item.link;
+    this._link = item.link;
     this._likes = item.likes;
     this._owner = item.owner;
     this._id = item._id;
@@ -20,20 +20,19 @@ export default class Card {
 
   _getElement() {
     const cardElement = document.querySelector(this._templateSelector)
-    .content
-    .querySelector('.cards__item')
-    .cloneNode(true);
-
+      .content
+      .querySelector('.cards__item')
+      .cloneNode(true);
     return cardElement;
   }
 
   _setEventListeners() {
     this._likeButton.addEventListener('click', () => {
-      this._handleLikeClick(this._element, this._id)
+      this._handleLikeClick(this._id, this._checkMyLike());
     });
 
     this._cardImage.addEventListener('click', () => {
-      this._handleCardClick(this._name, this._link)
+      this._handleCardClick(this._link, this._name)
     });
 
     this._cartButton.addEventListener('click', () => {
@@ -54,7 +53,7 @@ export default class Card {
       this._likeButton.classList.remove('cards__like-button_active');
       this._likeCounter.textContent = this._likes.length;
     }
-  } 
+  }
 
   _deleteElement() {
     this._element.remove();
