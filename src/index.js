@@ -39,6 +39,7 @@ const profileAvatar = document.querySelector('.profile__avatar-image');
 // Buttons
 const buttonOpenEditProfilePopup = document.querySelector('.profile__edit-button');
 const buttonOpenAddCardPopup = document.querySelector('.profile__add-button');
+const buttonOpenEditAvatar = document.querySelector
 
 const api = new Api ({
   baseUrl: 'https://nomoreparties.co/v1/plus-cohort-20',
@@ -108,6 +109,7 @@ const handleDeleteClick = (cardId) => {
 const handleImageClick = (link, title) => {
   popupWithImage.open(link, title);
 };
+
 
 //   cartButton.addEventListener('click', function (evt) {
 //     removeCardRequest(card._id)
@@ -248,6 +250,9 @@ const popupWithEditAvatar = new PopupWithForm(popupAvatar, {
 })
 popupWithEditAvatar.setEventListeners();
 
+profileAvatar.addEventListener('click', () => {
+  popupWithEditAvatar.open();})
+
 // попап с добавлением карточки
 
 const popupWithAddCard = new PopupWithForm(popupCreate, {
@@ -255,8 +260,9 @@ const popupWithAddCard = new PopupWithForm(popupCreate, {
     return api.addCardRequest(name, link)
     .then((card) => {
 
-      cardList.addItem(item)
+      cardList.addItem(createCard(card, userId))
     })
+    .catch(err => {console.log(err)});
   }
 })
 
@@ -266,3 +272,31 @@ buttonOpenAddCardPopup.addEventListener('click', () => {
   popupWithAddCard.open();
 })
 
+// const cardList = new Section({
+//   renderer: (item, userId) => {
+//     cardList.addItem(createCard(item, userId));
+//   }
+// });
+
+// const createCard = (item, user) => {
+//   const card = new Card({userId: user, templateSelector: '#cards__item-template', item: item, 
+//   handleLikeClick: (cardId) => {
+//     api.changeLikeRequest(cardId)
+//     .then((res) => {
+//       card.checkLikes(res)
+//     })
+//     .catch(err => {console.log(err)});
+//   },
+
+//   handleDeleteClick: (cardId, card) => {
+//     api.removeCardRequest(cardId)
+//     .then(() => {card.deleteElement()})
+//   },
+
+//   handleImageClick: () => {
+//     popupWithImage.open(link, title)
+//   }
+
+
+// })
+// }
