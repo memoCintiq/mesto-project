@@ -23,8 +23,6 @@ export default class Card {
   _setEventListeners() {
     this._likeButton.addEventListener('click', () => {
       this._handleLikeClick(this, this._checkMyLike());
-      this._switchLikeButtonState();
-      this._switchLikeCounterState();
     });
 
     this._cardImage.addEventListener('click', () => {
@@ -32,8 +30,7 @@ export default class Card {
     });
 
     this._cartButton.addEventListener('click', () => {
-      this._handleDeleteClick(this._id)
-      this._deleteElement();
+      this._handleDeleteClick(this)
     });
   }
 
@@ -57,9 +54,9 @@ export default class Card {
           this._likeCounter.textContent = this._likes.length )
       : ( this._likeCounter.classList.remove('cards__like-counter_active'),
           this._likeCounter.textContent = '');
-   }
+  }
 
-  _deleteElement() {
+  remove() {
     this._element.remove();
   }
 

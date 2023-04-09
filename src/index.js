@@ -45,8 +45,9 @@ const handleLikeClick = (card, isLiked) => {
     .catch(rej => console.log(rej));
 };
 
-const handleDeleteClick = (cardId) => {
-  api.removeCardRequest(cardId)
+const handleDeleteClick = (card) => {
+  api.removeCardRequest(card.id())
+    .then(() => card.remove())
     .catch(rej => console.log(rej));
 };
 
@@ -120,11 +121,14 @@ popupWithImage.setEventListeners();
 
 const popupWithEditProfile = new PopupWithForm(popupProfileSelector, {
   handleFormSubmit: (formValues) => {
+    popupWithEditProfile.renderLoading(true);
     api.setProfileRequest(formValues.name, formValues.about)
     .then((profile) => {
       userInfo.setUserInfo({ userName: profile.name, userAbout: profile.about});
+      popupWithEditProfile.close();
     })
-    .catch(err => {console.log(err)});
+    .catch(err => {console.log(err)})
+    .finally(() => popupWithEditProfile.renderLoading(false));
   }
 });
 popupWithEditProfile.setEventListeners();
@@ -140,11 +144,14 @@ buttonOpenEditProfilePopup.addEventListener('click', () => {
 
 const popupWithEditAvatar = new PopupWithForm(popupAvatarSelector, {
   handleFormSubmit: (formValues) => {
+    popupWithEditAvatar.renderLoading(true);
     api.changeAvatarRequest(formValues.avatarUrl)
     .then((res) => {
       userInfo.setUserAvatar({ userAvatar: res.avatar });
+      popupWithEditAvatar.close();
     })
-    .catch(err => {console.log(err)});
+    .catch(err => {console.log(err)})
+    .finally(() => popupWithEditAvatar.renderLoading(false));
   }
 });
 popupWithEditAvatar.setEventListeners();
@@ -158,11 +165,14 @@ profileAvatar.addEventListener('click', () => {
 
 const popupWithAddCard = new PopupWithForm(popupCreateSelector, {
   handleFormSubmit: (formValues) => {
+    popupWithAddCard.renderLoading(true);
     api.addCardRequest(formValues.place, formValues.url)
     .then((card) => {
       cardList.addItem(createCard(userId, card));
+      popupWithAddCard.close();
     })
-    .catch(err => {console.log(err)});
+    .catch(err => {console.log(err)})
+    .finally(() => popupWithAddCard.renderLoading(false));
   }
 });
 popupWithAddCard.setEventListeners();
