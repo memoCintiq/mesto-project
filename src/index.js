@@ -1,152 +1,183 @@
 import './pages/index.css';
-import { settings, user } from './components/constants.js';
-import { openPopup, closePopup } from './components/modal.js';
-import { enableValidation } from './components/validate.js';
 import {
-  createCard,
-  addCard,
-  addCardList
-} from './components/card.js';
-import {
-  getProfileRequest,
-  setProfileRequest,
-  changeAvatarRequest,
-  getCardsRequest,
-  addCardRequest,
-} from './components/api.js';
+  settings,
+  popupProfileSelector,
+  popupCreateSelector,
+  popupAvatarSelector,
+  popupImageSelector,
+  formProfile,
+  formAddCard,
+  formChangeAvatar,
+  profileAvatar,
+  buttonOpenEditProfilePopup,
+  buttonOpenAddCardPopup,
+} from './utils/constants.js';
 
-import { renderLoading} from './components/utils';
+import FormValidator from './components/FormValidator.js';
+import PopupWithImage from './components/PopupWithImage.js';
+import PopupWithForm from './components/PopupWithForm.js';
+import Api from './components/Api.js';
+import UserInfo from './components/UserInfo';
+import Section from './components/Section';
+import Card from './components/Card.js';
 
-// Popups
-const popupProfile = document.querySelector('#profile');
-const popupCreate = document.querySelector('#create');
-const popupAvatar = document.querySelector('#avatar');
+const api = new Api ({
+  baseUrl: 'https://nomoreparties.co/v1/plus-cohort-20',
+  headers: {
+    authorization: 'fc4830a2-99fd-4452-a8e2-34e875dbc10e',
+    'Content-Type': 'application/json',
+  },
+});
 
-// Forms
-const formProfile = document.querySelector('#profile-form');
-const formAddCard = document.querySelector('#create-form');
-const formChangeAvatar = document.querySelector('#avatar-form');
+const userInfo = new UserInfo({
+  nameSelector: '.profile__name',
+  aboutSelector: '.profile__about',
+  avatarSelector: '.profile__avatar-image'
+});
 
+let userId = '';
 
-// Inputs
-const inputName = formProfile.querySelector('#inputName');
-const inputAbout = formProfile.querySelector('#inputAbout');
-const inputPlace = formAddCard.querySelector('#inputPlace');
-const inputUrl = formAddCard.querySelector('#inputUrl');
-const inputAvatarUrl = formChangeAvatar.querySelector('#avatarUrl');
+// Handlers for Card instances
 
-// Profile data
-const profileName = document.querySelector('.profile__name');
-const profileAbout = document.querySelector('.profile__about');
-const profileAvatar = document.querySelector('.profile__avatar-image');
-
-// Buttons
-const buttonOpenEditProfilePopup = document.querySelector('.profile__edit-button');
-const buttonOpenAddCardPopup = document.querySelector('.profile__add-button');
-
-// List of cards
-const cards = document.querySelector('.cards__items');
-
-// Get data from server
-
-Promise.all([getProfileRequest(), getCardsRequest()])
-  .then(([profile]) => {
-    profileName.textContent = profile.name;
-    profileAbout.textContent = profile.about;
-    profileAvatar.src = profile.avatar;
-    user.id = profile._id;
-    user.name = profile.name;
-  })
-  .then(() => {
-    getCardsRequest().then((item) => {
-      addCardList(item, cards);
-    });
-  })
-  .catch((rej) => {
-    console.log(rej);
-  });
-
-
-// Handlers for editing profile and adding a card
-
-function handleFormProfile(evt) {
-  evt.preventDefault();
-  renderLoading(true, evt);
-  setProfileRequest(inputName.value, inputAbout.value)
-    .then((res) => {
-      profileName.textContent = res.name;
-      profileAbout.textContent = res.about;
-      closePopup(popupProfile);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      renderLoading(false, evt);
-    });
-}
-
-function handleFormAddCard(evt) {
-  evt.preventDefault();
-  renderLoading(true, evt);
-  addCardRequest(inputPlace.value, inputUrl.value)
-    .then((card) => {
-      addCard(createCard(card), cards);
-      closePopup(popupCreate);
-      evt.target.reset();
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      renderLoading(false, evt);
-    });
-}
-
-const handleFormChangeAvatar = (evt) => {
-  evt.preventDefault();
-  renderLoading(true, evt);
-  changeAvatarRequest(inputAvatarUrl.value)
-    .then((res) => {
-      profileAvatar.src = res.avatar;
-      closePopup(popupAvatar);
-      evt.target.reset();
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      renderLoading(false, evt);
-    });
+const handleLikeClick = (card, isLiked) => {
+  api.changeLikeRequest(card.id(), isLiked)
+    .then((res) => card.setLikeInfo(res))
+    .catch(rej => console.log(rej));
 };
 
-// Open popup for editing profile
+const handleDeleteClick = (card) => {
+  api.removeCardRequest(card.id())
+    .then(() => card.remove())
+    .catch(rej => console.log(rej));
+};
 
-buttonOpenEditProfilePopup.addEventListener("click", function () {
-  inputName.value = profileName.textContent;
-  inputAbout.value = profileAbout.textContent;
-  openPopup(popupProfile);
+const handleImageClick = (link, title) => {
+  popupWithImage.open(link, title);
+};
+
+// Creating Card instance and its markup
+
+const createCard = (userId, cardData) => {
+  const card = new Card(
+      userId,
+      {
+        handleCardClick: handleImageClick,
+        handleLikeClick: handleLikeClick,
+        handleDeleteClick: handleDeleteClick
+      },
+      '#cards__item-template',
+      cardData
+    );
+  const cardElement = card.generate();
+
+  return cardElement;
+}
+
+// Creating Section instance for operating with markup
+
+const cardList = new Section({
+  renderer: (item) => {
+    cardList.addItem(createCard(userId, item));
+  }
+},
+'.cards__items'
+);
+
+//Get data from server
+
+api.getAppInfo()
+  .then(([ cardsArray, userData ]) => {
+
+    userId = userData._id;
+
+    userInfo.setUserInfo({
+      userName: userData.name,
+      userAbout: userData.about
+    });
+    userInfo.setUserAvatar({
+      userAvatar: userData.avatar
+    })
+
+    cardList.renderItems(cardsArray);
+  })
+  .catch(rej => console.log(rej));
+
+// Creating validators for each form
+
+const formProfileValid = new FormValidator(settings, formProfile);
+const formAddCardValid = new FormValidator(settings, formAddCard);
+const formChangeAvatarValid = new FormValidator(settings, formChangeAvatar);
+
+formProfileValid.enableValidation();
+formAddCardValid.enableValidation();
+formChangeAvatarValid.enableValidation();
+
+// Попап с картинкой
+
+const popupWithImage = new PopupWithImage(popupImageSelector);
+popupWithImage.setEventListeners();
+
+// Попап с редактированием профиля
+
+const popupWithEditProfile = new PopupWithForm(popupProfileSelector, {
+  handleFormSubmit: (formValues) => {
+    popupWithEditProfile.renderLoading(true);
+    api.setProfileRequest(formValues.name, formValues.about)
+    .then((profile) => {
+      userInfo.setUserInfo({ userName: profile.name, userAbout: profile.about});
+      popupWithEditProfile.close();
+    })
+    .catch(err => {console.log(err)})
+    .finally(() => popupWithEditProfile.renderLoading(false));
+  }
 });
+popupWithEditProfile.setEventListeners();
 
-// Open popup for adding card
+buttonOpenEditProfilePopup.addEventListener('click', () => {
+  formProfileValid.resetValidation();
+  const profile = userInfo.getUserInfo();
+  popupWithEditProfile.setInputValues(profile);
+  popupWithEditProfile.open();
+})
 
-buttonOpenAddCardPopup.addEventListener("click", function () {
-  openPopup(popupCreate);
+// Попап с редактированием аватара
+
+const popupWithEditAvatar = new PopupWithForm(popupAvatarSelector, {
+  handleFormSubmit: (formValues) => {
+    popupWithEditAvatar.renderLoading(true);
+    api.changeAvatarRequest(formValues.avatarUrl)
+    .then((res) => {
+      userInfo.setUserAvatar({ userAvatar: res.avatar });
+      popupWithEditAvatar.close();
+    })
+    .catch(err => {console.log(err)})
+    .finally(() => popupWithEditAvatar.renderLoading(false));
+  }
 });
+popupWithEditAvatar.setEventListeners();
 
-profileAvatar.addEventListener("click", function () {
-  openPopup(popupAvatar);
+profileAvatar.addEventListener('click', () => {
+  formChangeAvatarValid.resetValidation();
+  popupWithEditAvatar.open();
+})
+
+// Попап с добавлением карточки
+
+const popupWithAddCard = new PopupWithForm(popupCreateSelector, {
+  handleFormSubmit: (formValues) => {
+    popupWithAddCard.renderLoading(true);
+    api.addCardRequest(formValues.place, formValues.url)
+    .then((card) => {
+      cardList.addItem(createCard(userId, card));
+      popupWithAddCard.close();
+    })
+    .catch(err => {console.log(err)})
+    .finally(() => popupWithAddCard.renderLoading(false));
+  }
 });
+popupWithAddCard.setEventListeners();
 
-
-// Submit buttons listeners+handlers
-
-formProfile.addEventListener("submit", handleFormProfile);
-
-formAddCard.addEventListener("submit", handleFormAddCard);
-
-formChangeAvatar.addEventListener("submit", handleFormChangeAvatar);
-
-// Validation
-
-enableValidation(settings);
+buttonOpenAddCardPopup.addEventListener('click', () => {
+  formAddCardValid.resetValidation();
+  popupWithAddCard.open();
+})
